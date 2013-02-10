@@ -1,0 +1,114 @@
+<div class="row">
+<div id="chartdiv" style="height:500px;"></div>
+<script>
+// The url for our json data
+var jsonurl = "./data/stats";
+  
+$(document).ready(function(){
+    createPlot();
+});
+
+function redraw(jsonurl) {
+    createPlot();
+}
+
+function createPlot() {
+    $('#chartdiv').html('');
+    
+    var jsonurl = "./data/stats";
+    var ajaxDataRenderer = function(url, plot, options) {
+        var ret = null;
+        $.ajax({
+            async: false,
+            url: url,
+            dataType:'json',
+            success: function(data) {
+                $("#maxTableCell").html(data[1]['max'] + ' Watt');
+                $("#avgTableCell").html(data[1]['avg'] /1000 + ' kWh / dag');
+                $("#sumTableCell").html(data[1]['sum'] + ' kWh');
+                $("#expectedTableCell").html(data[1]['avg'] * 365 / 1000 + ' kWh');
+                $("#maxTableCellPrice").html('&euro; ' + Math.ceil(data[1]['max'] / 10 * <?php echo $this->kwhPrijs ?>) /100);
+                $("#avgTableCellPrice").html('&euro; ' + Math.ceil(data[1]['avg'] / 10 * <?php echo $this->kwhPrijs ?>)/ 100);
+                $("#sumTableCellPrice").html('&euro; ' + Math.ceil(data[1]['sum'] * 100 * <?php echo $this->kwhPrijs ?>)/ 100);
+                $("#expectedTableCellPrice").html('&euro; ' + Math.ceil(data[1]['avg'] * 365 / 10 * <?php echo $this->kwhPrijs ?>) / 100);
+                ret = data[0];
+            }
+        });
+        
+        return ret;
+    };
+
+    var plot1b = $.jqplot('chartdiv', jsonurl,{
+        title: 'kWh Verbruik',
+        dataRenderer: ajaxDataRenderer,
+        dataRendererOptions: { 
+            unusedOptionalUrl: jsonurl
+        },
+        series:[{
+            lineWidth:4
+            //markerOptions:{style:'square'},
+            //renderer:$.jqplot.BarRenderer
+        }],
+        seriesDefaults: {
+            trendline: {
+                show: true,
+                color: '#c5b47f'
+            }
+            //fill: true,
+            //rendererOptions: {fillToZero: true}
+        },
+        axesDefaults: {
+            tickRenderer: $.jqplot.CanvasAxisTickRenderer ,
+            tickOptions: {
+                fontSize: '10pt',
+                angle: -30
+            }
+        },
+        axes: {
+            xaxis: {
+                label: 'Datum',
+                renderer:$.jqplot.DateAxisRenderer,
+                tickOptions:{
+                    showGridline: false
+                },
+                showTicks: true
+            },
+            yaxis:{
+                min:0,
+                label:'Watt',
+                labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+                labelOptions: {
+                    angle: 90
+                }
+            }
+        },
+        highlighter: {
+            show: true,
+            sizeAdjust: 7.5
+        },
+        cursor: {
+            show: true,
+            zoom: true
+        }
+    });
+}
+</script>
+    
+</div>
+<div class="row">
+    <div class="center">
+        <table align="center">
+            <tr><th colspan="2">Verbruik</th><th width="40"></th><th>Kosten</th><td>&euro; <? echo $this->kwhPrijs; ?> per kWh</td></tr>
+            <tr><th>Gemiddeld:</th><td id="avgTableCell"> kWh / dag</td><td></td><td id="avgTableCellPrice"></td></tr>
+            <tr><th>Totaal voor dit overzicht:</th><td id="sumTableCell">kWh</td><td></td><td id="sumTableCellPrice"></td></tr>
+            <tr><th>Maximum in dit overzicht:</th><td id="maxTableCell">kWh</td><td></td><td id="maxTableCellPrice"></td></tr>
+            <tr><th>Verwachting per jaar:</th><td id="expectedTableCell"></td><td></td><td id="expectedTableCellPrice"></td></tr>
+        </table>
+        <?php
+        $wattBesparing = (24 * 365) / 1000;
+        $kwhPrijs = 0.23;
+        echo '1 watt besparing bespaart ' . $wattBesparing . ' kWh per jaar, dat is  &euro; ' . $wattBesparing * $kwhPrijs;
+        ?>
+    </div>
+</div>
+

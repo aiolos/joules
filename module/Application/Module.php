@@ -11,6 +11,12 @@ namespace Application;
 
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
+// Add these import statements:
+use Application\Model\Measurement;
+use Application\Model\MeasurementTable;
+
+use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\TableGateway\TableGateway;
 
 class Module
 {
@@ -34,6 +40,25 @@ class Module
                 'namespaces' => array(
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                 ),
+            ),
+        );
+    }
+    
+    public function getServiceConfig()
+    {
+        return array(
+            'factories' => array(
+                'Application\Model\MeasurementTable' =>  function($sm) {
+                    $tableGateway = $sm->get('MeasurementTableGateway');
+                    $table = new MeasurementTable($tableGateway);
+                    return $table;
+                },
+                'MeasurementTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Measurement());
+                    return new TableGateway('kwhmetingen', $dbAdapter, null, $resultSetPrototype);
+                },
             ),
         );
     }

@@ -31,7 +31,25 @@ body {
 }
 
 div.container a.brand {
-    background: url("../images/zf2-logo.png") no-repeat scroll 0 10px transparent;
+    /*background: url("../images/zf2-logo.png") no-repeat scroll 0 10px transparent;*/
     margin-left: 0;
     padding: 8px 20px 12px 40px;
+}
+
+.content{
+    /*background: url("../images/zf2-logo.png") no-repeat scroll 0 10px transparent;*/
+    height:100%;
+}
+
+th {
+    text-align: left;
+}
+
+.center {
+    text-align: center;
+    margin:0px auto;
+}
+
+.row {
+    height: 100%;
 }

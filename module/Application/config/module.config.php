@@ -50,6 +50,39 @@ return array(
                     ),
                 ),
             ),
+            'data' => array(
+                'type' => 'literal',
+                'options' => array(
+                    'route' => '/data',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'Application\Controller',
+                        'controller'    => 'Data',
+                        'action'        => 'index',
+                    ),
+                ),
+            ),
+            'datastats' => array(
+                'type' => 'literal',
+                'options' => array(
+                    'route' => '/data/stats',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'Application\Controller',
+                        'controller'    => 'Data',
+                        'action'        => 'stats',
+                    ),
+                ),
+            ),
+            'stats' => array(
+                'type' => 'literal',
+                'options' => array(
+                    'route' => '/stats',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'Application\Controller',
+                        'controller'    => 'Index',
+                        'action'        => 'stats',
+                    ),
+                ),
+            ),
         ),
     ),
     'service_manager' => array(
@@ -69,7 +102,8 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
-            'Application\Controller\Index' => 'Application\Controller\IndexController'
+            'Application\Controller\Index' => 'Application\Controller\IndexController',
+            'Application\Controller\Data' => 'Application\Controller\DataController',
         ),
     ),
     'view_manager' => array(
@@ -86,6 +120,9 @@ return array(
         ),
         'template_path_stack' => array(
             __DIR__ . '/../view',
+        ),
+        'strategies' => array(
+            'ViewJsonStrategy',
         ),
     ),
 );
